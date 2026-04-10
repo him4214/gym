@@ -27,7 +27,6 @@
     .btn { background: #00c853; color: white; cursor: pointer; }
     .video { background: #2979ff; color: white; }
     .warmup { background: #ff9800; color: black; }
-    .timer { font-size: 18px; color: #ffcc00; margin-top: 5px; }
   </style>
 </head>
 
@@ -52,52 +51,53 @@ const warmup = [
   ["Stairmaster", 300]
 ];
 
+// 🎥 REAL VIDEO LINKS (specific tutorials)
 const program = {
 "Sunday - Chest + Triceps": [
-  ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
-  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+dumbbell+press"],
-  ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+chest+fly"],
-  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
-  ["Assisted Dip Machine", 90, "https://www.youtube.com/results?search_query=assisted+dips"]
+  ["Dumbbell Bench Press", 90, "https://www.youtube.com/watch?v=VmB1G1K7v94"],
+  ["Incline Dumbbell Press", 90, "https://www.youtube.com/watch?v=8iPEnn-ltC8"],
+  ["Cable Chest Fly", 60, "https://www.youtube.com/watch?v=eozdVDA78K0"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/watch?v=2-LAMcpzODU"],
+  ["Assisted Dip Machine", 90, "https://www.youtube.com/watch?v=6kALZikXxLc"]
 ],
 
 "Monday - Back + Biceps": [
-  ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
-  ["Seated Row Machine", 90, "https://www.youtube.com/results?search_query=seated+row"],
-  ["Chest Supported Row", 90, "https://www.youtube.com/results?search_query=chest+supported+row"],
-  ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
-  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curl"],
-  ["Hammer Curl", 60, "https://www.youtube.com/results?search_query=hammer+curl"]
+  ["Lat Pulldown", 90, "https://www.youtube.com/watch?v=CAwf7n6Luuc"],
+  ["Seated Row Machine", 90, "https://www.youtube.com/watch?v=GZbfZ033f74"],
+  ["Chest Supported Row", 90, "https://www.youtube.com/watch?v=vT2GjY_Umpw"],
+  ["Face Pull", 60, "https://www.youtube.com/watch?v=rep-qVOkqgk"],
+  ["Dumbbell Curl", 60, "https://www.youtube.com/watch?v=ykJmrZ5v0Oo"],
+  ["Hammer Curl", 60, "https://www.youtube.com/watch?v=zC3nLlEvin4"]
 ],
 
 "Tuesday - Legs + Abs": [
-  ["Barbell Squat", 120, "https://www.youtube.com/results?search_query=barbell+squat"],
-  ["Leg Press", 90, "https://www.youtube.com/results?search_query=leg+press"],
-  ["Leg Curl", 60, "https://www.youtube.com/results?search_query=leg+curl"],
-  ["Calf Raises", 60, "https://www.youtube.com/results?search_query=calf+raises"],
-  ["Hanging Knee Raises", 60, "https://www.youtube.com/results?search_query=hanging+knee+raises"],
-  ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
-  ["Plank", 60, "https://www.youtube.com/results?search_query=plank"]
+  ["Barbell Squat", 120, "https://www.youtube.com/watch?v=Dy28eq2PjcM"],
+  ["Leg Press", 90, "https://www.youtube.com/watch?v=IZxyjW7MPJQ"],
+  ["Leg Curl", 60, "https://www.youtube.com/watch?v=1Tq3QdYUuHs"],
+  ["Calf Raises", 60, "https://www.youtube.com/watch?v=-M4-G8p8fmc"],
+  ["Hanging Knee Raises", 60, "https://www.youtube.com/watch?v=flmMq7g9V3w"],
+  ["Cable Crunch", 60, "https://www.youtube.com/watch?v=AV5PmZJIrrw"],
+  ["Plank", 60, "https://www.youtube.com/watch?v=pSHjTRCQxIw"]
 ],
 
 "Wednesday - Shoulders + Arms": [
-  ["Lateral Raises", 60, "https://www.youtube.com/results?search_query=lateral+raise"],
-  ["Cable Lateral Raise", 60, "https://www.youtube.com/results?search_query=cable+lateral+raise"],
-  ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
-  ["Dumbbell Front Raise", 60, "https://www.youtube.com/results?search_query=front+raise"],
-  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curl"],
-  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"]
+  ["Lateral Raises", 60, "https://www.youtube.com/watch?v=3VcKaXpzqRo"],
+  ["Cable Lateral Raise", 60, "https://www.youtube.com/watch?v=3VcKaXpzqRo"],
+  ["Face Pull", 60, "https://www.youtube.com/watch?v=rep-qVOkqgk"],
+  ["Dumbbell Front Raise", 60, "https://www.youtube.com/watch?v=-t7fuZ0KhDA"],
+  ["Dumbbell Curl", 60, "https://www.youtube.com/watch?v=ykJmrZ5v0Oo"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/watch?v=2-LAMcpzODU"]
 ],
 
 "Friday - Upper + Abs": [
-  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+press"],
-  ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
-  ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
-  ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+fly"],
-  ["Cable Curl", 60, "https://www.youtube.com/results?search_query=cable+curl"],
-  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
-  ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
-  ["Plank", 60, "https://www.youtube.com/results?search_query=plank"]
+  ["Incline Dumbbell Press", 90, "https://www.youtube.com/watch?v=8iPEnn-ltC8"],
+  ["Lat Pulldown", 90, "https://www.youtube.com/watch?v=CAwf7n6Luuc"],
+  ["Dumbbell Bench Press", 90, "https://www.youtube.com/watch?v=VmB1G1K7v94"],
+  ["Cable Chest Fly", 60, "https://www.youtube.com/watch?v=eozdVDA78K0"],
+  ["Cable Curl", 60, "https://www.youtube.com/watch?v=kwG2ipFRgfo"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/watch?v=2-LAMcpzODU"],
+  ["Cable Crunch", 60, "https://www.youtube.com/watch?v=AV5PmZJIrrw"],
+  ["Plank", 60, "https://www.youtube.com/watch?v=pSHjTRCQxIw"]
 ]
 };
 
@@ -108,7 +108,6 @@ function loadDay() {
   const workoutDiv = document.getElementById("workout");
   workoutDiv.innerHTML = "";
 
-  // WARMUP FIRST
   workoutDiv.innerHTML += `<h2>🟡 Warmup</h2>`;
 
   warmup.forEach(w => {
@@ -116,13 +115,12 @@ function loadDay() {
       <div class="card">
         <h3>${w[0]} - 5 min</h3>
         <button class="warmup" onclick="startTimer(${w[1]})">
-          Start Warmup Timer
+          Start Warmup
         </button>
       </div>
     `;
   });
 
-  // WORKOUT
   workoutDiv.innerHTML += `<h2>🔥 Workout</h2>`;
 
   program[day].forEach(ex => {
@@ -131,11 +129,11 @@ function loadDay() {
         <h3>${ex[0]}</h3>
 
         <button class="btn" onclick="startTimer(${ex[1]})">
-          Start Rest (${ex[1]}s)
+          Rest Timer (${ex[1]}s)
         </button>
 
         <button class="video" onclick="window.open('${ex[2]}')">
-          Watch Video
+          Watch Form Video
         </button>
       </div>
     `;
@@ -160,7 +158,7 @@ function startTimer(seconds) {
     if (t <= 0) {
       clearInterval(timer);
       display.innerHTML = "🔥 DONE";
-      alert("Go!");
+      alert("Next set!");
     }
   }, 1000);
 }
