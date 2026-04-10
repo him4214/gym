@@ -24,34 +24,10 @@
       border-radius: 10px;
     }
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      background: #00c853;
-      color: white;
-      cursor: pointer;
-    }
-
-    .timer {
-      font-size: 18px;
-      color: #ffcc00;
-      margin-top: 5px;
-    }
-
-    .video {
-      background: #2979ff;
-      color: white;
-    }
-
-    .done {
-      background: #555;
-      color: white;
-    }
+    .btn { background: #00c853; color: white; cursor: pointer; }
+    .video { background: #2979ff; color: white; }
+    .warmup { background: #ff9800; color: black; }
+    .timer { font-size: 18px; color: #ffcc00; margin-top: 5px; }
   </style>
 </head>
 
@@ -70,22 +46,28 @@
 <div id="workout"></div>
 
 <script>
+
+const warmup = [
+  ["Treadmill", 300],
+  ["Stairmaster", 300]
+];
+
 const program = {
 "Sunday - Chest + Triceps": [
   ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
   ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+dumbbell+press"],
   ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+chest+fly"],
   ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
-  ["Assisted Dip Machine", 90, "https://www.youtube.com/results?search_query=assisted+dips+machine"]
+  ["Assisted Dip Machine", 90, "https://www.youtube.com/results?search_query=assisted+dips"]
 ],
 
 "Monday - Back + Biceps": [
   ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
-  ["Seated Row Machine", 90, "https://www.youtube.com/results?search_query=seated+row+machine"],
+  ["Seated Row Machine", 90, "https://www.youtube.com/results?search_query=seated+row"],
   ["Chest Supported Row", 90, "https://www.youtube.com/results?search_query=chest+supported+row"],
   ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
-  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curls"],
-  ["Hammer Curl", 60, "https://www.youtube.com/results?search_query=hammer+curls"]
+  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curl"],
+  ["Hammer Curl", 60, "https://www.youtube.com/results?search_query=hammer+curl"]
 ],
 
 "Tuesday - Legs + Abs": [
@@ -95,24 +77,24 @@ const program = {
   ["Calf Raises", 60, "https://www.youtube.com/results?search_query=calf+raises"],
   ["Hanging Knee Raises", 60, "https://www.youtube.com/results?search_query=hanging+knee+raises"],
   ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
-  ["Plank", 60, "https://www.youtube.com/results?search_query=plank+exercise"]
+  ["Plank", 60, "https://www.youtube.com/results?search_query=plank"]
 ],
 
 "Wednesday - Shoulders + Arms": [
   ["Lateral Raises", 60, "https://www.youtube.com/results?search_query=lateral+raise"],
   ["Cable Lateral Raise", 60, "https://www.youtube.com/results?search_query=cable+lateral+raise"],
   ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
-  ["Dumbbell Front Raise", 60, "https://www.youtube.com/results?search_query=dumbbell+front+raise"],
+  ["Dumbbell Front Raise", 60, "https://www.youtube.com/results?search_query=front+raise"],
   ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curl"],
   ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"]
 ],
 
 "Friday - Upper + Abs": [
-  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+dumbbell+press"],
+  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+press"],
   ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
   ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
   ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+fly"],
-  ["Cable Curl", 60, "https://www.youtube.com/results?search_query=cable+curls"],
+  ["Cable Curl", 60, "https://www.youtube.com/results?search_query=cable+curl"],
   ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
   ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
   ["Plank", 60, "https://www.youtube.com/results?search_query=plank"]
@@ -126,12 +108,27 @@ function loadDay() {
   const workoutDiv = document.getElementById("workout");
   workoutDiv.innerHTML = "";
 
-  program[day].forEach((ex, i) => {
+  // WARMUP FIRST
+  workoutDiv.innerHTML += `<h2>🟡 Warmup</h2>`;
+
+  warmup.forEach(w => {
     workoutDiv.innerHTML += `
       <div class="card">
-        <div class="row">
-          <h3>${ex[0]}</h3>
-        </div>
+        <h3>${w[0]} - 5 min</h3>
+        <button class="warmup" onclick="startTimer(${w[1]})">
+          Start Warmup Timer
+        </button>
+      </div>
+    `;
+  });
+
+  // WORKOUT
+  workoutDiv.innerHTML += `<h2>🔥 Workout</h2>`;
+
+  program[day].forEach(ex => {
+    workoutDiv.innerHTML += `
+      <div class="card">
+        <h3>${ex[0]}</h3>
 
         <button class="btn" onclick="startTimer(${ex[1]})">
           Start Rest (${ex[1]}s)
@@ -140,8 +137,6 @@ function loadDay() {
         <button class="video" onclick="window.open('${ex[2]}')">
           Watch Video
         </button>
-
-        <div class="timer" id="timer-${i}"></div>
       </div>
     `;
   });
@@ -152,25 +147,26 @@ function startTimer(seconds) {
   let t = seconds;
 
   let display = document.createElement("div");
-  display.style.marginTop = "10px";
   display.style.color = "#ffcc00";
-  display.innerHTML = "Rest: " + t + "s";
+  display.style.margin = "10px 0";
+  display.innerHTML = "Timer: " + t + "s";
 
   document.body.appendChild(display);
 
   timer = setInterval(() => {
     t--;
-    display.innerHTML = "Rest: " + t + "s";
+    display.innerHTML = "Timer: " + t + "s";
 
     if (t <= 0) {
       clearInterval(timer);
-      display.innerHTML = "🔥 DONE REST";
-      alert("Go next set!");
+      display.innerHTML = "🔥 DONE";
+      alert("Go!");
     }
   }, 1000);
 }
 
 loadDay();
+
 </script>
 
 </body>
