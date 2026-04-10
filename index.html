@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Gym System</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f0f0f;
+      color: white;
+      padding: 20px;
+    }
+
+    button, select {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #00c853;
+      color: white;
+      cursor: pointer;
+    }
+
+    .timer {
+      font-size: 18px;
+      color: #ffcc00;
+      margin-top: 5px;
+    }
+
+    .video {
+      background: #2979ff;
+      color: white;
+    }
+
+    .done {
+      background: #555;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🏋️ My 5-Day Gym System</h1>
+
+<select id="day" onchange="loadDay()">
+  <option>Sunday - Chest + Triceps</option>
+  <option>Monday - Back + Biceps</option>
+  <option>Tuesday - Legs + Abs</option>
+  <option>Wednesday - Shoulders + Arms</option>
+  <option>Friday - Upper + Abs</option>
+</select>
+
+<div id="workout"></div>
+
+<script>
+const program = {
+"Sunday - Chest + Triceps": [
+  ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
+  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+dumbbell+press"],
+  ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+chest+fly"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
+  ["Assisted Dip Machine", 90, "https://www.youtube.com/results?search_query=assisted+dips+machine"]
+],
+
+"Monday - Back + Biceps": [
+  ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
+  ["Seated Row Machine", 90, "https://www.youtube.com/results?search_query=seated+row+machine"],
+  ["Chest Supported Row", 90, "https://www.youtube.com/results?search_query=chest+supported+row"],
+  ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
+  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curls"],
+  ["Hammer Curl", 60, "https://www.youtube.com/results?search_query=hammer+curls"]
+],
+
+"Tuesday - Legs + Abs": [
+  ["Barbell Squat", 120, "https://www.youtube.com/results?search_query=barbell+squat"],
+  ["Leg Press", 90, "https://www.youtube.com/results?search_query=leg+press"],
+  ["Leg Curl", 60, "https://www.youtube.com/results?search_query=leg+curl"],
+  ["Calf Raises", 60, "https://www.youtube.com/results?search_query=calf+raises"],
+  ["Hanging Knee Raises", 60, "https://www.youtube.com/results?search_query=hanging+knee+raises"],
+  ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
+  ["Plank", 60, "https://www.youtube.com/results?search_query=plank+exercise"]
+],
+
+"Wednesday - Shoulders + Arms": [
+  ["Lateral Raises", 60, "https://www.youtube.com/results?search_query=lateral+raise"],
+  ["Cable Lateral Raise", 60, "https://www.youtube.com/results?search_query=cable+lateral+raise"],
+  ["Face Pull", 60, "https://www.youtube.com/results?search_query=face+pull"],
+  ["Dumbbell Front Raise", 60, "https://www.youtube.com/results?search_query=dumbbell+front+raise"],
+  ["Dumbbell Curl", 60, "https://www.youtube.com/results?search_query=dumbbell+curl"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"]
+],
+
+"Friday - Upper + Abs": [
+  ["Incline Dumbbell Press", 90, "https://www.youtube.com/results?search_query=incline+dumbbell+press"],
+  ["Lat Pulldown", 90, "https://www.youtube.com/results?search_query=lat+pulldown"],
+  ["Dumbbell Bench Press", 90, "https://www.youtube.com/results?search_query=dumbbell+bench+press"],
+  ["Cable Chest Fly", 60, "https://www.youtube.com/results?search_query=cable+fly"],
+  ["Cable Curl", 60, "https://www.youtube.com/results?search_query=cable+curls"],
+  ["Triceps Pushdown", 60, "https://www.youtube.com/results?search_query=triceps+pushdown"],
+  ["Cable Crunch", 60, "https://www.youtube.com/results?search_query=cable+crunch"],
+  ["Plank", 60, "https://www.youtube.com/results?search_query=plank"]
+]
+};
+
+let timer;
+
+function loadDay() {
+  const day = document.getElementById("day").value;
+  const workoutDiv = document.getElementById("workout");
+  workoutDiv.innerHTML = "";
+
+  program[day].forEach((ex, i) => {
+    workoutDiv.innerHTML += `
+      <div class="card">
+        <div class="row">
+          <h3>${ex[0]}</h3>
+        </div>
+
+        <button class="btn" onclick="startTimer(${ex[1]})">
+          Start Rest (${ex[1]}s)
+        </button>
+
+        <button class="video" onclick="window.open('${ex[2]}')">
+          Watch Video
+        </button>
+
+        <div class="timer" id="timer-${i}"></div>
+      </div>
+    `;
+  });
+}
+
+function startTimer(seconds) {
+  clearInterval(timer);
+  let t = seconds;
+
+  let display = document.createElement("div");
+  display.style.marginTop = "10px";
+  display.style.color = "#ffcc00";
+  display.innerHTML = "Rest: " + t + "s";
+
+  document.body.appendChild(display);
+
+  timer = setInterval(() => {
+    t--;
+    display.innerHTML = "Rest: " + t + "s";
+
+    if (t <= 0) {
+      clearInterval(timer);
+      display.innerHTML = "🔥 DONE REST";
+      alert("Go next set!");
+    }
+  }, 1000);
+}
+
+loadDay();
+</script>
+
+</body>
+</html>
