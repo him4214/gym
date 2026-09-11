@@ -1,1 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Workout</title>
+<style>
+  :root{
+    --bg: #121212;
+    --surface: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #f2f2f2;
+    --text-dim: #9a9a9a;
+    --accent: #e8e8e8;
+    --warn: #d97b66;
+    --done: #6ea88a;
+    --muscle-primary: #c9534a;
+    --muscle-secondary: #cf8a42;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  header{
+    padding:24px 16px 12px;
+    max-width:640px;
+    margin:0 auto;
+  }
+  h1{
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0.14em;
+    color:var(--text-dim);
+  }
+  nav{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding:12px 16px 4px;
+    max-width:640px;
+    margin:0 auto;
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none;}
+  nav button{
+    flex:0 0 auto;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:8px 14px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+  }
+  nav button.active{
+    background:var(--accent);
+    color:#111;
+    border-color:var(--accent);
+  }
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:12px 16px 40px;
+  }
+  .warmup{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:18px;
+  }
+  .warmup h2{
+    font-size:12px;
+    text-transform:none;
+    color:var(--text-dim);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .warmup ul{list-style:none;}
+  .warmup li{
+    font-size:14px;
+    color:var(--text);
+    padding:2px 0;
+    display:flex;
+    justify-content:space-between;
+  }
+  .warmup li span:last-child{color:var(--text-dim);}
 
+  .muscle-map{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    padding:10px 0 8px;
+  }
+  .muscle-map figure{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+  .muscle-map svg{
+    width:78px;
+    height:auto;
+    display:block;
+  }
+  .muscle-map figcaption{
+    font-size:10px;
+    letter-spacing:0.04em;
+    color:var(--text-dim);
+  }
+  .muscle-map .body-base{
+    fill:var(--border);
+  }
+  .muscle-map .muscle-primary{
+    fill:var(--muscle-primary);
+    fill-opacity:0.85;
+  }
+  .muscle-map .muscle-secondary{
+    fill:var(--muscle-secondary);
+    fill-opacity:0.8;
+  }
+  .muscle-legend{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    font-size:11px;
+    color:var(--text-dim);
+    padding-bottom:18px;
+  }
+  .muscle-legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+  .muscle-legend .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+  }
+  .muscle-legend .dot.primary{background:var(--muscle-primary);}
+  .muscle-legend .dot.secondary{background:var(--muscle-secondary);}
+
+  .exercise{
+    border-bottom:1px solid var(--border);
+    padding:16px 0;
+  }
+  .exercise:last-child{border-bottom:none;}
+  .ex-name{
+    font-size:17px;
+    font-weight:600;
+  }
+  .ex-target{
+    font-size:13px;
+    color:var(--text-dim);
+    margin-top:2px;
+  }
+  .ex-meta{
+    display:flex;
+    gap:14px;
+    margin-top:8px;
+    font-size:14px;
+    color:var(--text);
+  }
+  .ex-meta .rest-label{color:var(--text-dim);}
+  .ex-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:12px;
+  }
+  .btn{
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text);
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .btn:hover{border-color:#444;}
+  .btn.link{
+    color:var(--text-dim);
+  }
+  .btn.link:hover{color:var(--text);}
+  .timer{
+    display:none;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:var(--surface);
+  }
+  .timer.show{display:flex;}
+  .timer .time{
+    font-variant-numeric: tabular-nums;
+    font-size:20px;
+    font-weight:600;
+    min-width:56px;
+  }
+  .timer.finished .time{color:var(--warn);}
+  .timer .small-btn{
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--text-dim);
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .timer .small-btn:hover{color:var(--text);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MY WORKOUT</h1>
+</header>
+
+<nav id="dayNav"></nav>
+
+<main id="content"></main>
+
+<script>
+// ---------------------------------------------------------------
+// WORKOUT DATA — edit exercises, sets/reps, rest, and video links here
+// ---------------------------------------------------------------
+const WORKOUTS = {
+  Sunday: {
+    label: "Upper",
+    warmup: [
+      { name: "Treadmill", duration: "5 min" },
+      { name: "StairMaster", duration: "5 min" }
+    ],
+    exercises: [
+      { name: "Smith Incline Bench Press", target: "Upper Chest • Front Delts • Triceps", sets: 3, reps: "6–10", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=8iPEnn-ltC8" },
+      { name: "Lat Pulldown", target: "Lats • Biceps • Upper Back", sets: 3, reps: "8–12", restDisplay: "2 min", restSeconds: 120, video: "https://www.youtube.com/watch?v=CAwf7n6Luuc" },
+      { name: "Seated Cable Row", target: "Mid-Back • Lats • Rear Delts • Biceps", sets: 3, reps: "8–12", restDisplay: "2 min", restSeconds: 120, video: "https://www.youtube.com/watch?v=GZbfZ033f74" },
+      { name: "Seated Cable Fly", target: "Chest", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=Iwe6H61CyNY" },
+      { name: "Preacher Curl", target: "Biceps", sets: 3, reps: "8–12", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=fIWP-FRFNU0" },
+      { name: "Bayesian Cable Curl", target: "Biceps (Long Head)", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=k4XZrqhES-8" },
+      { name: "Dumbbell Shrugs", target: "Upper Traps", sets: 3, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=cJRiCY5nOc8" },
+      { name: "Wrist Curls", target: "Forearm Flexors", sets: 2, reps: "12–20", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=PLxysCn8yFE" },
+      { name: "Wrist Extensions", target: "Forearm Extensors", sets: 2, reps: "12–20", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=6d40nx_-4tE" }
+    ]
+  },
+  Monday: {
+    label: "Lower + Abs",
+    warmup: [
+      { name: "Treadmill", duration: "5 min" },
+      { name: "StairMaster", duration: "5 min" }
+    ],
+    exercises: [
+      { name: "Squat", target: "Quads • Glutes • Core", sets: 3, reps: "6–10", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=ultWZbUMPL8" },
+      { name: "Romanian Deadlift", target: "Hamstrings • Glutes", sets: 3, reps: "8–12", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=jEy_czb3RKA" },
+      { name: "Seated Leg Curl", target: "Hamstrings", sets: 3, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=1Tq3QdYUuHs" },
+      { name: "Leg Extension", target: "Quads", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=YyvSfVjQeL0" },
+      { name: "Calf Raises", target: "Calves", sets: 3, reps: "10–15", restDisplay: "60–90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=-M4-G8p8fmc" },
+      { name: "Cable Crunch", target: "Abs", sets: 3, reps: "10–15", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=2fbujeH3F0E" },
+      { name: "Hanging Knee Raise", target: "Lower Abs • Hip Flexors", sets: 3, reps: "8–15", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=Pr1ieGZ5atk" }
+    ]
+  },
+  Tuesday: {
+    label: "Push + Abs",
+    warmup: [
+      { name: "Treadmill", duration: "5 min" },
+      { name: "StairMaster", duration: "5 min" }
+    ],
+    exercises: [
+      { name: "Bench Press", target: "Chest • Triceps • Front Delts", sets: 3, reps: "6–10", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=rT7DgCr-3pg" },
+      { name: "Smith Incline Bench Press", target: "Upper Chest • Front Delts • Triceps", sets: 2, reps: "8–12", restDisplay: "2 min", restSeconds: 120, video: "https://www.youtube.com/watch?v=8iPEnn-ltC8" },
+      { name: "Seated Cable Fly", target: "Chest", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=Iwe6H61CyNY" },
+      { name: "Cable Lateral Raise", target: "Side Delts", sets: 3, reps: "12–20", restDisplay: "60–90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=Z5FsMFCzsKo" },
+      { name: "Overhead Cable Triceps Extension", target: "Triceps", sets: 3, reps: "10–15", restDisplay: "60–90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=YbX7Wd8jQ-Q" },
+      { name: "Cable Crunch", target: "Abs", sets: 3, reps: "10–15", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=2fbujeH3F0E" },
+      { name: "Russian Twists", target: "Obliques • Core", sets: 3, reps: "12–20/side", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=wkD8rjkodUI" }
+    ]
+  },
+  Wednesday: {
+    label: "Pull + Arms",
+    warmup: [
+      { name: "Treadmill", duration: "5 min" },
+      { name: "StairMaster", duration: "5 min" }
+    ],
+    exercises: [
+      { name: "Lat Pulldown", target: "Lats • Biceps • Upper Back", sets: 3, reps: "8–12", restDisplay: "2 min", restSeconds: 120, video: "https://www.youtube.com/watch?v=CAwf7n6Luuc" },
+      { name: "Seated Cable Row", target: "Mid-Back • Lats • Rear Delts • Biceps", sets: 3, reps: "8–12", restDisplay: "2 min", restSeconds: 120, video: "https://www.youtube.com/watch?v=GZbfZ033f74" },
+      { name: "Reverse Fly", target: "Rear Delts • Upper Back", sets: 3, reps: "12–20", restDisplay: "60–90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=JoCRRvJZ_x8" },
+      { name: "Dumbbell Shrugs", target: "Upper Traps", sets: 3, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=cJRiCY5nOc8" },
+      { name: "Cable Curl", target: "Biceps", sets: 3, reps: "8–12", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=NFzTWp2qpiE" },
+      { name: "Hammer Curl", target: "Brachialis • Brachioradialis • Biceps", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=zC3nLlEvin4" },
+      { name: "Wrist Curls", target: "Forearm Flexors", sets: 2, reps: "12–20", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=PLxysCn8yFE" },
+      { name: "Wrist Extensions", target: "Forearm Extensors", sets: 2, reps: "12–20", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=6d40nx_-4tE" }
+    ]
+  },
+  Saturday: {
+    label: "Legs + Abs",
+    warmup: [
+      { name: "Treadmill", duration: "5 min" },
+      { name: "StairMaster", duration: "5 min" }
+    ],
+    exercises: [
+      { name: "Squat", target: "Quads • Glutes • Core", sets: 3, reps: "6–10", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=ultWZbUMPL8" },
+      { name: "Romanian Deadlift", target: "Hamstrings • Glutes", sets: 3, reps: "8–12", restDisplay: "2–3 min", restSeconds: 180, video: "https://www.youtube.com/watch?v=jEy_czb3RKA" },
+      { name: "Seated Leg Curl", target: "Hamstrings", sets: 3, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=1Tq3QdYUuHs" },
+      { name: "Leg Extension", target: "Quads", sets: 2, reps: "10–15", restDisplay: "90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=YyvSfVjQeL0" },
+      { name: "Calf Raises", target: "Calves", sets: 3, reps: "10–15", restDisplay: "60–90 sec", restSeconds: 90, video: "https://www.youtube.com/watch?v=-M4-G8p8fmc" },
+      { name: "Cable Crunch", target: "Abs", sets: 3, reps: "10–15", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=2fbujeH3F0E" },
+      { name: "Hanging Knee Raise", target: "Lower Abs • Hip Flexors", sets: 3, reps: "8–15", restDisplay: "60 sec", restSeconds: 60, video: "https://www.youtube.com/watch?v=Pr1ieGZ5atk" }
+    ]
+  }
+};
+
+const DAY_ORDER = ["Sunday", "Monday", "Tuesday", "Wednesday", "Saturday"];
+
+// ---------------------------------------------------------------
+// MUSCLE DIAGRAM — simple body skeleton + muscle group overlays
+// ---------------------------------------------------------------
+
+// base body skeleton, shared by front and back figures
+const BODY_BASE_SVG = `
+  <circle class="body-base" cx="50" cy="16" r="10"/>
+  <rect class="body-base" x="46" y="24" width="8" height="8"/>
+  <rect class="body-base" x="32" y="30" width="36" height="55" rx="10"/>
+  <rect class="body-base" x="18" y="32" width="10" height="40" rx="5"/>
+  <rect class="body-base" x="72" y="32" width="10" height="40" rx="5"/>
+  <rect class="body-base" x="16" y="72" width="9" height="38" rx="4"/>
+  <rect class="body-base" x="75" y="72" width="9" height="38" rx="4"/>
+  <rect class="body-base" x="34" y="83" width="32" height="18" rx="8"/>
+  <rect class="body-base" x="35" y="100" width="14" height="50" rx="7"/>
+  <rect class="body-base" x="51" y="100" width="14" height="50" rx="7"/>
+  <rect class="body-base" x="36" y="150" width="12" height="45" rx="6"/>
+  <rect class="body-base" x="52" y="150" width="12" height="45" rx="6"/>
+`;
+
+// muscle group overlays, keyed by muscle name, per view
+const FRONT_MUSCLES = {
+  chest:      `<ellipse cx="42" cy="45" rx="9" ry="7"/><ellipse cx="58" cy="45" rx="9" ry="7"/>`,
+  frontDelts: `<circle cx="23" cy="36" r="7"/><circle cx="77" cy="36" r="7"/>`,
+  sideDelts:  `<ellipse cx="19" cy="38" rx="5" ry="7"/><ellipse cx="81" cy="38" rx="5" ry="7"/>`,
+  biceps:     `<ellipse cx="23" cy="52" rx="6" ry="14"/><ellipse cx="77" cy="52" rx="6" ry="14"/>`,
+  brachialis: `<ellipse cx="20" cy="66" rx="4" ry="5"/><ellipse cx="80" cy="66" rx="4" ry="5"/>`,
+  triceps:    `<rect x="19" y="40" width="4" height="26" rx="2"/><rect x="77" y="40" width="4" height="26" rx="2"/>`,
+  forearms:   `<rect x="16" y="72" width="9" height="38" rx="4"/><rect x="75" y="72" width="9" height="38" rx="4"/>`,
+  abs:        `<rect x="40" y="68" width="20" height="24" rx="4"/>`,
+  obliques:   `<rect x="34" y="70" width="6" height="20" rx="3"/><rect x="60" y="70" width="6" height="20" rx="3"/>`,
+  quads:      `<rect x="35" y="100" width="14" height="50" rx="7"/><rect x="51" y="100" width="14" height="50" rx="7"/>`,
+  calves:     `<rect x="36" y="150" width="12" height="45" rx="6"/><rect x="52" y="150" width="12" height="45" rx="6"/>`
+};
+
+const BACK_MUSCLES = {
+  traps:      `<path d="M40,26 L60,26 L68,38 L32,38 Z"/>`,
+  lats:       `<rect x="33" y="42" width="11" height="28" rx="4"/><rect x="56" y="42" width="11" height="28" rx="4"/>`,
+  midBack:    `<rect x="44" y="40" width="12" height="22" rx="3"/>`,
+  rearDelts:  `<circle cx="23" cy="36" r="7"/><circle cx="77" cy="36" r="7"/>`,
+  triceps:    `<ellipse cx="23" cy="52" rx="6" ry="14"/><ellipse cx="77" cy="52" rx="6" ry="14"/>`,
+  forearms:   `<rect x="16" y="72" width="9" height="38" rx="4"/><rect x="75" y="72" width="9" height="38" rx="4"/>`,
+  glutes:     `<ellipse cx="42" cy="92" rx="9" ry="8"/><ellipse cx="58" cy="92" rx="9" ry="8"/>`,
+  hamstrings: `<rect x="35" y="100" width="14" height="50" rx="7"/><rect x="51" y="100" width="14" height="50" rx="7"/>`,
+  calves:     `<rect x="36" y="150" width="12" height="45" rx="6"/><rect x="52" y="150" width="12" height="45" rx="6"/>`
+};
+
+// which muscles to highlight per day, split by view and by training intensity
+const DAY_MUSCLES = {
+  Sunday: {
+    front: { primary: ["chest", "biceps", "forearms"], secondary: ["frontDelts"] },
+    back:  { primary: ["lats", "traps", "forearms"],  secondary: ["rearDelts", "triceps"] }
+  },
+  Monday: {
+    front: { primary: ["quads", "abs"], secondary: ["calves"] },
+    back:  { primary: ["hamstrings", "glutes"], secondary: ["calves"] }
+  },
+  Tuesday: {
+    front: { primary: ["chest", "frontDelts"], secondary: ["sideDelts", "abs", "obliques"] },
+    back:  { primary: ["triceps"], secondary: [] }
+  },
+  Wednesday: {
+    front: { primary: ["biceps", "forearms"], secondary: ["brachialis"] },
+    back:  { primary: ["lats", "midBack", "traps", "forearms"], secondary: ["rearDelts"] }
+  },
+  Saturday: {
+    front: { primary: ["quads", "abs"], secondary: ["calves"] },
+    back:  { primary: ["hamstrings", "glutes"], secondary: ["calves"] }
+  }
+};
+
+function renderFigureSVG(muscleSet, view){
+  const primaryOverlays = view.primary
+    .filter(key => muscleSet[key])
+    .map(key => `<g class="muscle-primary">${muscleSet[key]}</g>`)
+    .join("");
+  const secondaryOverlays = view.secondary
+    .filter(key => muscleSet[key])
+    .map(key => `<g class="muscle-secondary">${muscleSet[key]}</g>`)
+    .join("");
+  return `<svg viewBox="0 0 100 200">${BODY_BASE_SVG}${secondaryOverlays}${primaryOverlays}</svg>`;
+}
+
+function renderMuscleMap(day){
+  const highlights = DAY_MUSCLES[day];
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <div class="muscle-map">
+      <figure>${renderFigureSVG(FRONT_MUSCLES, highlights.front)}<figcaption>Front</figcaption></figure>
+      <figure>${renderFigureSVG(BACK_MUSCLES, highlights.back)}<figcaption>Back</figcaption></figure>
+    </div>
+    <div class="muscle-legend">
+      <span><span class="dot primary"></span>Primary</span>
+      <span><span class="dot secondary"></span>Secondary</span>
+    </div>
+  `;
+  return wrap;
+}
+
+const navEl = document.getElementById("dayNav");
+const contentEl = document.getElementById("content");
+let activeDay = DAY_ORDER[0];
+const timers = {}; // per-exercise timer state, keyed by "day-index"
+
+function formatTime(sec){
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return m + ":" + String(s).padStart(2, "0");
+}
+
+function buildNav(){
+  navEl.innerHTML = "";
+  DAY_ORDER.forEach(day => {
+    const btn = document.createElement("button");
+    btn.textContent = day;
+    btn.className = day === activeDay ? "active" : "";
+    btn.addEventListener("click", () => {
+      activeDay = day;
+      buildNav();
+      renderDay();
+    });
+    navEl.appendChild(btn);
+  });
+}
+
+function renderDay(){
+  const day = WORKOUTS[activeDay];
+  contentEl.innerHTML = "";
+
+  // Muscle diagram
+  contentEl.appendChild(renderMuscleMap(activeDay));
+
+  // Warm-up
+  const warmupEl = document.createElement("section");
+  warmupEl.className = "warmup";
+  warmupEl.innerHTML = `<h2>Warm-up</h2><ul>${
+    day.warmup.map(w => `<li><span>${w.name}</span><span>${w.duration}</span></li>`).join("")
+  }</ul>`;
+  contentEl.appendChild(warmupEl);
+
+  // Exercises
+  day.exercises.forEach((ex, i) => {
+    const key = activeDay + "-" + i;
+    const card = document.createElement("div");
+    card.className = "exercise";
+    card.innerHTML = `
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-target">${ex.target}</div>
+      <div class="ex-meta">
+        <span>${ex.sets} sets × ${ex.reps} reps</span>
+        <span class="rest-label">Rest: ${ex.restDisplay}</span>
+      </div>
+      <div class="ex-actions">
+        <button class="btn" data-action="rest">Start Rest</button>
+        <a class="btn link" href="${ex.video}" target="_blank" rel="noopener noreferrer">Watch Exercise ↗</a>
+      </div>
+      <div class="timer" id="timer-${key}">
+        <span class="time" id="time-${key}">${formatTime(ex.restSeconds)}</span>
+        <button class="small-btn" data-action="pause">Pause</button>
+        <button class="small-btn" data-action="reset">Reset</button>
+      </div>
+    `;
+    contentEl.appendChild(card);
+
+    const restBtn = card.querySelector('[data-action="rest"]');
+    const pauseBtn = card.querySelector('[data-action="pause"]');
+    const resetBtn = card.querySelector('[data-action="reset"]');
+    const timerEl = card.querySelector(`#timer-${key}`);
+    const timeEl = card.querySelector(`#time-${key}`);
+
+    restBtn.addEventListener("click", () => startTimer(key, ex.restSeconds, timerEl, timeEl, pauseBtn));
+    pauseBtn.addEventListener("click", () => togglePause(key, pauseBtn));
+    resetBtn.addEventListener("click", () => resetTimer(key, ex.restSeconds, timerEl, timeEl, pauseBtn));
+  });
+}
+
+function startTimer(key, totalSeconds, timerEl, timeEl, pauseBtn){
+  // clear existing interval for this exercise if any
+  if (timers[key] && timers[key].interval) clearInterval(timers[key].interval);
+
+  timers[key] = {
+    remaining: totalSeconds,
+    paused: false,
+    interval: null
+  };
+  timerEl.classList.add("show");
+  timerEl.classList.remove("finished");
+  pauseBtn.textContent = "Pause";
+  timeEl.textContent = formatTime(totalSeconds);
+
+  timers[key].interval = setInterval(() => {
+    const t = timers[key];
+    if (t.paused) return;
+    t.remaining--;
+    if (t.remaining <= 0){
+      t.remaining = 0;
+      timeEl.textContent = "Rest finished";
+      timerEl.classList.add("finished");
+      clearInterval(t.interval);
+    } else {
+      timeEl.textContent = formatTime(t.remaining);
+    }
+  }, 1000);
+}
+
+function togglePause(key, pauseBtn){
+  const t = timers[key];
+  if (!t) return;
+  t.paused = !t.paused;
+  pauseBtn.textContent = t.paused ? "Resume" : "Pause";
+}
+
+function resetTimer(key, totalSeconds, timerEl, timeEl, pauseBtn){
+  const t = timers[key];
+  if (t && t.interval) clearInterval(t.interval);
+  timers[key] = { remaining: totalSeconds, paused: false, interval: null };
+  timeEl.textContent = formatTime(totalSeconds);
+  timerEl.classList.remove("finished");
+  pauseBtn.textContent = "Pause";
+}
+
+buildNav();
+renderDay();
+</script>
+
+</body>
+</html>
